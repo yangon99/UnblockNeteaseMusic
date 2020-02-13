@@ -17,41 +17,41 @@ const match = (id, source) => {
 	let meta = {}
 	const candidate = (source || global.source || ['qq', 'kuwo', 'migu']).filter(name => name in provider)
 	return find(id)
-	.then(info => {
-		meta = info
-		return Promise.all(candidate.map(name => provider[name].check(info).catch(() => {})))
-	})
-	.then(urls => {
-		urls = urls.filter(url => url)
-		return Promise.all(urls.map(url => check(url)))
-	})
-	.then(songs => {
-		songs = songs.filter(song => song.url)
-		if (!songs.length) return Promise.reject()
-		console.log(`[${meta.id}] ${meta.name}\n${songs[0].url}`)
-		return songs[0]
-	})
+		.then(info => {
+			meta = info
+			return Promise.all(candidate.map(name => provider[name].check(info).catch(() => { })))
+		})
+		.then(urls => {
+			urls = urls.filter(url => url)
+			return Promise.all(urls.map(url => check(url)))
+		})
+		.then(songs => {
+			songs = songs.filter(song => song.url)
+			if (!songs.length) return Promise.reject()
+			console.log(`> [${meta.id}] ${meta.name}\n> ${songs[0].url}`)
+			return songs[0]
+		})
 }
 
 const check = url => {
-	const song = {size: 0, br: null, url: null, md5: null}
-	return Promise.race([request('GET', url, {'range': 'bytes=0-8191'}), new Promise((_, reject) => setTimeout(() => reject(504), 5 * 1000))])
-	.then(response => {
-		if (!response.statusCode.toString().startsWith('2')) return Promise.reject()
-		if (url.includes('qq.com'))
-			song.md5 = response.headers['server-md5']
-		else if (url.includes('xiami.net') || url.includes('qianqian.com'))
-			song.md5 = response.headers['etag'].replace(/"/g, '').toLowerCase()
-		song.size = parseInt((response.headers['content-range'] || '').split('/').pop() || response.headers['content-length']) || 0
-		song.url = response.url.href
-		return response.headers['content-length'] === '8192' ? response.body(true) : Promise.reject()
-	})
-	.then(data => {
-		const bitrate = decode(data)
-		song.br = (bitrate && !isNaN(bitrate)) ? bitrate * 1000 : null
-	})
-	.catch(() => {})
-	.then(() => song)
+	const song = { size: 0, br: null, url: null, md5: null }
+	return Promise.race([request('GET', url, { 'range': 'bytes=0-8191' }), new Promise((_, reject) => setTimeout(() => reject(504), 5 * 1000))])
+		.then(response => {
+			if (!response.statusCode.toString().startsWith('2')) return Promise.reject()
+			if (url.includes('qq.com'))
+				song.md5 = response.headers['server-md5']
+			else if (url.includes('xiami.net') || url.includes('qianqian.com'))
+				song.md5 = response.headers['etag'].replace(/"/g, '').toLowerCase()
+			song.size = parseInt((response.headers['content-range'] || '').split('/').pop() || response.headers['content-length']) || 0
+			song.url = response.url.href
+			return response.headers['content-length'] === '8192' ? response.body(true) : Promise.reject()
+		})
+		.then(data => {
+			const bitrate = decode(data)
+			song.br = (bitrate && !isNaN(bitrate)) ? bitrate * 1000 : null
+		})
+		.catch(() => { })
+		.then(() => song)
 }
 
 const decode = buffer => {
