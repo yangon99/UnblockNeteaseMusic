@@ -70,9 +70,9 @@ const proxy = {
 		if (source_ip === '127.0.0.1')
 			source_ip = 'local-redir';
 		if (socket)
-			console.log(source_ip + ' [' + log_time + '] TUNNEL', mark, req.url);
+			console.log('[' + log_time + ']-' + source_ip + ' TUNNEL', mark, req.url);
 		else
-			console.log(source_ip + ' [' + log_time + '] MITM', mark, parse(req.url).host, req.socket.encrypted ? '(ssl)' : '')
+			console.log('[' + log_time + ']-' + source_ip + ' MITM', mark, parse(req.url).host, req.socket.encrypted ? '(ssl)' : '')
 
 	},
 	authenticate: ctx => {
