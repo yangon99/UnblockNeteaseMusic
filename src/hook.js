@@ -56,6 +56,7 @@ hook.target.path = new Set([
 	'/batch',
 	'/api/batch',
 	'/api/v1/search/get',
+	'/api/v1/search/song/get',
 	'/api/cloudsearch/pc',
 	'/api/v1/playlist/manipulate/tracks',
 	'/api/song/like',
@@ -199,6 +200,7 @@ hook.connect.before = ctx => {
 			ctx.decision = 'blank'
 		}
 	}
+	else if (url.href.includes(global.endpoint)) ctx.decision = 'proxy'
 }
 
 hook.negotiate.before = ctx => {
