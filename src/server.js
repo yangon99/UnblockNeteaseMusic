@@ -172,7 +172,7 @@ const server = {
 	https: require('https').createServer(options).on('request', proxy.core.mitm).on('connect', proxy.core.tunnel)
 }
 
-server.whitelist = []
+server.whitelist = ['://www.gstatic.com/generate_204', '://192.168.7.240']
 server.blacklist = ['://127\\.\\d+\\.\\d+\\.\\d+', '://localhost']
 server.authentication = null
 

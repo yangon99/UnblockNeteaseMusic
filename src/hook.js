@@ -127,9 +127,6 @@ hook.request.before = ctx => {
 			ctx.decision = 'close'
 		}
 	}
-	else if (url.hostname == 'www.gstatic.com' && url.path == '/generate_204') {
-		return request.statusCode(204)
-	}
 }
 
 hook.request.after = ctx => {
