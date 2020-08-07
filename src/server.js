@@ -65,14 +65,14 @@ const proxy = {
 	log: ctx => {
 		const { req, socket, decision } = ctx
 		const mark = { close: '|', blank: '-', proxy: '>' }[decision] || '>'
-		var log_time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+		// var log_time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 		var source_ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).replace('::ffff:', '');
 		if (source_ip === '127.0.0.1')
 			source_ip = 'local-redir';
 		if (socket)
-			console.log('[' + log_time + ']-' + source_ip + ' TUNNEL', mark, req.url);
+			console.log(source_ip + ' TUNNEL', mark, req.url);
 		else
-			console.log('[' + log_time + ']-' + source_ip + ' MITM', mark, parse(req.url).host, req.socket.encrypted ? '(ssl)' : '')
+			console.log(source_ip + ' MITM', mark, parse(req.url).host, req.socket.encrypted ? '(ssl)' : '')
 
 	},
 	authenticate: ctx => {
