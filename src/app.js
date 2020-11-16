@@ -61,7 +61,7 @@ const target = Array.from(hook.target.host)
 global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = target.reduce((result, host) => Object.assign(result, { [host]: config.forceHost }), {})
-server.whitelist = ['://[\\w.]*music\\.126\\.net', '://[\\w.]*vod\\.126\\.net', '://192.168\\.\\d+\\.\\d+', '://www.gstatic.com']
+server.whitelist = ['://[\\w.]*music\\.126\\.net', '://[\\w.]*vod\\.126\\.net', '://www.gstatic.com']
 if (config.strict) server.blacklist.push('.*')
 server.authentication = config.token || null
 global.endpoint = config.endpoint

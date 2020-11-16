@@ -65,7 +65,6 @@ const proxy = {
 	log: ctx => {
 		const { req, socket, decision } = ctx
 		const mark = { close: '|', blank: '-', proxy: '>' }[decision] || '>'
-		// var log_time = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 		var source_ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).replace('::ffff:', '');
 		if (source_ip === '127.0.0.1')
 			source_ip = 'local-redir';
@@ -172,7 +171,7 @@ const server = {
 	https: require('https').createServer(options).on('request', proxy.core.mitm).on('connect', proxy.core.tunnel)
 }
 
-server.whitelist = ['://www.gstatic.com/generate_204', '://192.168.7.240']
+server.whitelist = []
 server.blacklist = ['://127\\.\\d+\\.\\d+\\.\\d+', '://localhost']
 server.authentication = null
 
