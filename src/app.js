@@ -67,20 +67,20 @@ server.authentication = config.token || null
 global.endpoint = config.endpoint
 if (config.endpoint) server.whitelist.push(escape(config.endpoint))
 
-hosts['music.httpdns.c.163.com'] = random(['59.111.181.35', '59.111.181.38'])
-hosts['httpdns.n.netease.com'] = random(['59.111.179.213', '59.111.179.214'])
+// hosts['music.httpdns.c.163.com'] = random(['59.111.181.35', '59.111.181.38'])
+// hosts['httpdns.n.netease.com'] = random(['59.111.179.213', '59.111.179.214'])
 
-const dns = host => new Promise((resolve, reject) => require('dns').lookup(host, { all: true }, (error, records) => error ? reject(error) : resolve(records.map(record => record.address))))
-const httpdns = host => require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns.reduce((result, domain) => result.concat(domain.ips), []))
-const httpdns2 = host => require('./request')('GET', 'https://httpdns.n.netease.com/httpdns/v2/d?domain=' + host).then(response => response.json()).then(jsonBody => Object.keys(jsonBody.data).map(key => jsonBody.data[key]).reduce((result, value) => result.concat(value.ip || []), []))
+const dns = host => new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error ? reject(error) : resolve(records.map(record => record.address))))
+const httpdns = host => require('./request')('POST', 'http://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns.reduce((result, domain) => result.concat(domain.ips), []))
+const httpdns2 = host => require('./request')('GET', 'http://httpdns.n.netease.com/httpdns/v2/d?domain=' + host).then(response => response.json()).then(jsonBody => Object.keys(jsonBody.data).map(key => jsonBody.data[key]).reduce((result, value) => result.concat(value.ip || []), []))
 
 Promise.all([httpdns, httpdns2].map(query => query(target.join(','))).concat(target.map(dns)))
-	.then(result => {
-		const { host } = hook.target
-		result.forEach(array => array.forEach(host.add, host))
-		server.whitelist = server.whitelist.concat(Array.from(host).map(escape))
-		const log = type => console.log(`${['HTTP', 'HTTPS'][type]} Server running @ http://${address || '0.0.0.0'}:${port[type]}`)
-		if (port[0]) server.http.listen(port[0], address).once('listening', () => log(0))
-		if (port[1]) server.https.listen(port[1], address).once('listening', () => log(1))
-	})
-	.catch(error => console.log(error))
+.then(result => {
+	const {host} = hook.target
+	result.forEach(array => array.forEach(host.add, host))
+	server.whitelist = server.whitelist.concat(Array.from(host).map(escape))
+	const log = type => console.log(`${['HTTP', 'HTTPS'][type]} Server running @ http://${address || '0.0.0.0'}:${port[type]}`)
+	if (port[0]) server.http.listen(port[0], address).once('listening', () => log(0))
+	if (port[1]) server.https.listen(port[1], address).once('listening', () => log(1))
+})
+.catch(error => console.log(error))
