@@ -1,8 +1,6 @@
-FROM alpine
-RUN apk add --update nodejs npm --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/main/
-
+FROM node:14-alpine
 ENV NODE_ENV production
-
+ENV ENABLE_FLAC true
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --production
