@@ -9,7 +9,7 @@ const linuxapiKey = 'rFgB&h#%2?^eDg:Q'
 
 const decrypt = (buffer, key) => {
 	const decipher = crypto.createDecipheriv('aes-128-ecb', key, '')
-	return Buffer.concat([decipher.update(buffer), decipher.final()])
+	return Buffer.concat([decipher.update(buffer, 'binary'), decipher.final()])
 }
 
 const encrypt = (buffer, key) => {
